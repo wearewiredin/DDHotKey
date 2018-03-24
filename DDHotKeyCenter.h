@@ -41,14 +41,14 @@ typedef void (^DDHotKeyTask)(NSEvent*);
 
 /**
  Register a target/action hotkey.
- The modifierFlags must be a bitwise OR of NSCommandKeyMask, NSAlternateKeyMask, NSControlKeyMask, or NSShiftKeyMask;
+ The modifierFlags must be a bitwise OR of NSEventModifierFlagCommand, NSEventModifierFlagOption, NSEventModifierFlagControl, or NSEventModifierFlagShift;
  Returns the hotkey registered.  If registration failed, returns nil.
  */
 - (DDHotKey *)registerHotKeyWithKeyCode:(unsigned short)keyCode modifierFlags:(NSUInteger)flags target:(id)target action:(SEL)action object:(id)object;
 
 /**
  Register a block callback hotkey.
- The modifierFlags must be a bitwise OR of NSCommandKeyMask, NSAlternateKeyMask, NSControlKeyMask, or NSShiftKeyMask;
+ The modifierFlags must be a bitwise OR of NSEventModifierFlagCommand, NSEventModifierFlagOption, NSEventModifierFlagControl, or NSEventModifierFlagShift;
  Returns the hotkey registered.  If registration failed, returns nil.
  */
 - (DDHotKey *)registerHotKeyWithKeyCode:(unsigned short)keyCode modifierFlags:(NSUInteger)flags task:(DDHotKeyTask)task;
