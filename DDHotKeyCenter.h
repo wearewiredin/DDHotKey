@@ -89,7 +89,7 @@ typedef void (^DDHotKeyTask)(NSEvent*);
 /**
  Returns a set of currently registered hotkeys
  **/
-- (NSSet *)registeredHotKeys;
+- (NSSet<DDHotKey *> *)registeredHotKeys;
 
 @end
 
