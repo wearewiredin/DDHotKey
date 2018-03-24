@@ -114,7 +114,7 @@ static DDHotKeyTextFieldEditor *DDFieldEditor(void) {
     BOOL ok = [super becomeFirstResponder];
     if (ok) {
         _hasSeenKeyDown = NO;
-        _globalMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:(NSEventTypeKeyDown | NSEventTypeFlagsChanged) handler:^NSEvent*(NSEvent *event){
+        _globalMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:(NSEventMaskKeyDown | NSEventMaskFlagsChanged) handler:^NSEvent*(NSEvent *event){
             [self processHotkeyEvent:event];
             return nil;
         }];
