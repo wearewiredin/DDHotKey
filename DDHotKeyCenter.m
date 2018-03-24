@@ -142,7 +142,10 @@ static DDHotKeyCenter *sharedHotKeyCenter = nil;
     }].count > 0;
 }
 
-- (DDHotKey *)_registerHotKey:(DDHotKey *)hotKey {
+- (DDHotKey *)_registerHotKey:(DDHotKey *)hotKey withError:(NSError **)error {
+    
+    error = error ?: &(NSError * __autoreleasing){ nil };
+    
     if ([_registeredHotKeys containsObject:hotKey]) {
         return hotKey;
     }
@@ -156,7 +159,10 @@ static DDHotKeyCenter *sharedHotKeyCenter = nil;
     OSStatus err = RegisterEventHotKey([hotKey keyCode], flags, keyID, GetEventDispatcherTarget(), 0, &carbonHotKey);
     
     //error registering hot key
-    if (err != 0) { return nil; }
+    if (err != 0) {
+        *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+        return nil;
+    }
     
     NSValue *refValue = [NSValue valueWithPointer:carbonHotKey];
     [hotKey setHotKeyRef:refValue];
@@ -168,8 +174,8 @@ static DDHotKeyCenter *sharedHotKeyCenter = nil;
     return hotKey;
 }
 
-- (DDHotKey *)registerHotKey:(DDHotKey *)hotKey {
-    return [self _registerHotKey:hotKey];
+- (DDHotKey *)registerHotKey:(DDHotKey *)hotKey withError:(NSError **)error {
+    return [self _registerHotKey:hotKey withError:error];
 }
 
 - (void)unregisterHotKey:(DDHotKey *)hotKey {
@@ -183,7 +189,9 @@ static DDHotKeyCenter *sharedHotKeyCenter = nil;
     [_registeredHotKeys removeObject:hotKey];
 }
 
-- (DDHotKey *)registerHotKeyWithKeyCode:(unsigned short)keyCode modifierFlags:(NSUInteger)flags task:(DDHotKeyTask)task {
+- (DDHotKey *)registerHotKeyWithKeyCode:(unsigned short)keyCode modifierFlags:(NSUInteger)flags task:(DDHotKeyTask)task error:(NSError **)error {
+    error = error ?: &(NSError * __autoreleasing){ nil };
+    
     //we can't add a new hotkey if something already has this combo
     if ([self hasRegisteredHotKeyWithKeyCode:keyCode modifierFlags:flags]) { return nil; }
     
@@ -192,10 +200,13 @@ static DDHotKeyCenter *sharedHotKeyCenter = nil;
     [newHotKey _setKeyCode:keyCode];
     [newHotKey _setModifierFlags:flags];
     
-    return [self _registerHotKey:newHotKey];
+    return [self _registerHotKey:newHotKey withError:error];
 }
 
-- (DDHotKey *)registerHotKeyWithKeyCode:(unsigned short)keyCode modifierFlags:(NSUInteger)flags target:(id)target action:(SEL)action object:(id)object {
+- (DDHotKey *)registerHotKeyWithKeyCode:(unsigned short)keyCode modifierFlags:(NSUInteger)flags target:(id)target action:(SEL)action object:(id)object error:(NSError **)error {
+    
+    error = error ?: &(NSError * __autoreleasing){ nil };
+    
     //we can't add a new hotkey if something already has this combo
     if ([self hasRegisteredHotKeyWithKeyCode:keyCode modifierFlags:flags]) { return nil; }
     
@@ -206,7 +217,7 @@ static DDHotKeyCenter *sharedHotKeyCenter = nil;
     [newHotKey _setObject:object];
     [newHotKey _setKeyCode:keyCode];
     [newHotKey _setModifierFlags:flags];
-    return [self _registerHotKey:newHotKey];
+    return [self _registerHotKey:newHotKey withError:error];
 }
 
 - (void)unregisterHotKeysMatching:(BOOL(^)(DDHotKey *hotkey))matcher {
