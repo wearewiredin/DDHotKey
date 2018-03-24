@@ -9,8 +9,8 @@
  */
 
 #import "DDHotKeyAppDelegate.h"
-#import "DDHotKeyCenter.h"
 #import <Carbon/Carbon.h>
+#import <DDHotKey/DDHotKey.h>
 
 @implementation DDHotKeyAppDelegate
 
